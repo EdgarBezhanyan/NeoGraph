@@ -6,16 +6,16 @@
 // Sets default values
 ARocketSpawnSocket::ARocketSpawnSocket()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	Init();
 }
 
 // Called when the game starts or when spawned
 void ARocketSpawnSocket::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -27,6 +27,14 @@ void ARocketSpawnSocket::Tick(float DeltaTime)
 
 void ARocketSpawnSocket::Fire(FVector start, FVector normal)
 {
+
+
+}
+
+void ARocketSpawnSocket::Init()
+{
+	m_mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	m_mesh->SetupAttachment(RootComponent);
 
 }
 
