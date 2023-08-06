@@ -1,0 +1,12 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-Rocket.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\User\Documents\Unreal Projects\MyProject2\Intermediate\Build\Win64\x64\MyProject2Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.InclOrderUnreal5_1.h.obj"
+"D:\User\Documents\Unreal Projects\MyProject2\Plugins\Rocket\Intermediate\Build\Win64\x64\UnrealEditor\Development\Rocket\Rocket.cpp.obj"
+"D:\User\Documents\Unreal Projects\MyProject2\Plugins\Rocket\Intermediate\Build\Win64\x64\UnrealEditor\Development\Rocket\Default.rc2.res"
+/OUT:"D:\User\Documents\Unreal Projects\MyProject2\Plugins\Rocket\Intermediate\Build\Win64\x64\UnrealEditor\Development\Rocket\UnrealEditor-Rocket.lib"

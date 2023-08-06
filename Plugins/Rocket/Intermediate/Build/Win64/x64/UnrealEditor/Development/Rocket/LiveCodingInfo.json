@@ -1,0 +1,11 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.Rocket.cpp.obj": [
+			"Rocket.init.gen.cpp.obj",
+			"RocketSpawnSocket.gen.cpp.obj",
+			"Rocket.cpp.obj",
+			"RocketSpawnSocket.cpp.obj"
+		]
+	}
+}
