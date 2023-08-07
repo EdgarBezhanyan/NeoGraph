@@ -27,10 +27,12 @@ void ARocketSpawnSocket::Tick(float DeltaTime)
 
 void ARocketSpawnSocket::Init()
 {
+	_RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root component"));
+	RootComponent = _RootComponent;
 	m_mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
-	m_mesh->SetupAttachment(GetRootComponent());
+	m_mesh->SetupAttachment(RootComponent);
 	Arrow = CreateDefaultSubobject<UArrowComponent>("Arrow");
-	Arrow->SetupAttachment(GetRootComponent());
+	Arrow->SetupAttachment(RootComponent);
 
 }
 

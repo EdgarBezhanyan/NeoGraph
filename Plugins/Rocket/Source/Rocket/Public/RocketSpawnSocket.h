@@ -43,6 +43,8 @@ private: // functions
 		void SpawnARocketProjectile(UPrimitiveComponent* HitComponent);
 		
 public: // members
+	UPROPERTY(EditAnywhere)
+		USceneComponent* _RootComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* m_mesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
