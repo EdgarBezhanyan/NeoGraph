@@ -59,9 +59,9 @@ FHitResult ARocketSpawnSocket::LineTrace(FVector start, FVector forwardVector)
 		{
 			if (GEngine) {
 
-				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("You are hitting: %s"), *OutHit.GetActor()->GetName()));
-				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Impact Point: %s"), *OutHit.ImpactPoint.ToString()));
-				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Normal Point: %s"), *OutHit.ImpactNormal.ToString()));
+				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("You are hitting: %s"), *OutHit.GetActor()->GetName()));
+				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Impact Point: %s"), *OutHit.ImpactPoint.ToString()));
+				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Normal Point: %s"), *OutHit.ImpactNormal.ToString()));
 
 			}
 		}
@@ -73,9 +73,10 @@ void ARocketSpawnSocket::SpawnARocketProjectile(UPrimitiveComponent* HitComponen
 {
 	FTransform SpawnLocAndRotation = GetActorTransform();
 	SpawnLocAndRotation.SetLocation(GetActorLocation() + (UKismetMathLibrary::GetForwardVector(GetActorRotation()) * 200));
-	ARocketProjectile* SpawnedActorRef = GetWorld()->SpawnActorDeferred<ARocketProjectile>(ActorToSpawn, SpawnLocAndRotation);
+	ARocketProjectile* SpawnedActorRef = GetWorld()->SpawnActorDeferred<ARocketProjectile>(ActorToSpawn, SpawnLocAndRotation,GetOwner());
 	SpawnedActorRef->ExposeOnSpawnHitComponent(HitComponent,Arrow);
 	SpawnedActorRef->FinishSpawning(SpawnLocAndRotation);
+	
 
 }
 

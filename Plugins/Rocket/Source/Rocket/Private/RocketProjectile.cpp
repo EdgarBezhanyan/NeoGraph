@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include <Kismet/GameplayStatics.h>
+#include "Components/TimelineComponent.h"
 
 
 
@@ -19,7 +20,7 @@ ARocketProjectile::ARocketProjectile()
 void ARocketProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	PlayerPawn = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	OwnerPawn = GetOwner();
 	timeLineInit();
 	BeginPlayFire();
 }
@@ -28,19 +29,18 @@ void ARocketProjectile::BeginPlay()
 void ARocketProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	CurveTimeline.TickTimeline(DeltaTime);
 
-	if (SpeedTimeline != NULL)
-	{
-		SpeedTimeline->TickComponent(DeltaTime, ELevelTick::LEVELTICK_TimeOnly, NULL);
-	}
 }
 
 void ARocketProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
-if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
+if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 {
-	OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+	if (OtherComp->IsSimulatingPhysics()) {
+		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+	}
 	Destroy();
 }
 }
@@ -49,6 +49,11 @@ void ARocketProjectile::ExposeOnSpawnHitComponent(UPrimitiveComponent* ExposeHit
 {
 	HitComponent = ExposeHitComponent;
 	StartHomingTargetComponent = ExposeStartHomingTargetComponent;
+	FVector Location = HitComponent->GetComponentLocation();
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Normal Point: %s"), *HitComponent->GetName()));
+
+
+
 }
 
 void ARocketProjectile::init()
@@ -74,7 +79,7 @@ void ARocketProjectile::init()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
-
+	ProjectileMovement->bIsHomingProjectile = 1;
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
 
@@ -92,10 +97,10 @@ void ARocketProjectile::timeLineInit()
 		FOnTimelineEventStatic TimelineFinishedCallback;
 		TimelineCallback.BindUFunction(this, FName{ TEXT("TimelineCallback") });
 		TimelineFinishedCallback.BindUFunction(this, FName{ TEXT("TimelineFinishedCallback") });
-		SpeedTimeline->AddInterpFloat(CurveFloat, TimelineCallback);
-		SpeedTimeline->SetTimelineFinishedFunc(TimelineFinishedCallback);
-
-		SpeedTimeline->RegisterComponent();
+		CurveTimeline.AddInterpFloat(CurveFloat, TimelineCallback);
+		CurveTimeline.SetTimelineFinishedFunc(TimelineFinishedCallback);
+		CurveTimeline.SetLooping(0);
+		CurveTimeline.PlayFromStart();
 	}
 }
 
@@ -103,7 +108,7 @@ void ARocketProjectile::BeginPlayFire()
 {
 	if (checkIfHomingStart()) {
 		ProjectileMovement->HomingTargetComponent = StartHomingTargetComponent;
-		SpeedTimeline->PlayFromStart();
+		timeLineInit();
 	}
 	else {
 		setHitObjectComponent();
@@ -112,7 +117,8 @@ void ARocketProjectile::BeginPlayFire()
 
 bool ARocketProjectile::checkIfHomingStart()
 {
-	if (PlayerPawn->GetVelocity().Length() > minSpeed) {
+
+	if (OwnerPawn->GetVelocity().Length() > minSpeed) {
 		return 1;
 	}
 	return 0;
@@ -133,17 +139,21 @@ void ARocketProjectile::setSpeed(float initSpeedBoost, float maxSpeedBoost, floa
 {
 	ProjectileMovement->InitialSpeed = initSpeedBoost + velocity;
 	ProjectileMovement->MaxSpeed = maxSpeedBoost + velocity;
+
+
+
 }
 
 
 void ARocketProjectile::TimelineCallback(float Value)
 {
 	if(checkIfHomingStart()){
-		setSpeed(InitSpeedBoost, MaxSpeedBoost, PlayerPawn->GetVelocity().Length());
+		setSpeed(InitSpeedBoost, MaxSpeedBoost, OwnerPawn->GetVelocity().Length());
 	}
 	else {
 		setHitObjectComponent();
 	}
+
 }
 
 void ARocketProjectile::TimelineFinishedCallback()

@@ -12,6 +12,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 
 
+
 UCLASS()
 class ROCKET_API ARocketProjectile : public AActor
 {
@@ -62,6 +63,8 @@ public:
 		UStaticMeshComponent* m_mesh;
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 		UCurveFloat* CurveFloat;
+	FTimeline CurveTimeline;
+
 	UPROPERTY(EditAnywhere)
 		float minSpeed;
 	UPROPERTY(EditAnywhere)
@@ -71,13 +74,13 @@ public:
 	UPROPERTY(EditAnywhere)
 		float MaxSpeedBoost;
 
+
 private:
 	UPROPERTY(EditAnywhere)
 		UPrimitiveComponent* HitComponent;
 	UPROPERTY(EditAnywhere)
 		USceneComponent* StartHomingTargetComponent;
-	UTimelineComponent* SpeedTimeline;
-	AActor* PlayerPawn;
+	AActor* OwnerPawn;
 
 private:
 	void init();
@@ -86,9 +89,14 @@ private:
 	bool checkIfHomingStart();
 	void setHitObjectComponent();
 	void setSpeed(float initSpeedBoost, float maxSpeedBoost, float velocity);
-	/*The function that will handle every tick of the float curve*/
+
+public:
 	UFUNCTION()
 		void TimelineCallback(float Value);
 	UFUNCTION()
 		void TimelineFinishedCallback();
+
+
+
+
 };
