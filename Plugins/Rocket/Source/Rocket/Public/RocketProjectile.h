@@ -5,11 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Kismet/KismetSystemLibrary.h"
 
 #include "RocketProjectile.generated.h"
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class UNiagaraSystem;
 
 
 
@@ -46,19 +52,27 @@ public:
 
 
 public:
-	/** called when projectile hits something */
-	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 	/** Returns CollisionComp subobject **/
 	USphereComponent* GetCollisionComp() const { return CollisionComp; }
 	/** Returns ProjectileMovement subobject **/
 	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
-
 	void ExposeOnSpawnHitComponent(UPrimitiveComponent* ExposeHitComponent, USceneComponent* ExposeStartHomingTargetComponent);
 
+
+
+protected:
+	/** called when projectile hits something */
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+
+
 public:
+	UPROPERTY(EditAnywhere, Category = "Firing")
+		UNiagaraSystem* FireEffectMuzzle;
+	UPROPERTY(EditAnywhere, Category = "Firing")
+		UParticleSystem* DestroyEffect;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* m_mesh;
 	UPROPERTY(EditAnywhere, Category = "Timeline")
@@ -89,6 +103,7 @@ private:
 	bool checkIfHomingStart();
 	void setHitObjectComponent();
 	void setSpeed(float initSpeedBoost, float maxSpeedBoost, float velocity);
+	void spawnEffect(UNiagaraSystem* Effect);
 
 public:
 	UFUNCTION()

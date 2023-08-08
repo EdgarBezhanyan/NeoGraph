@@ -7,8 +7,6 @@
 #include <Kismet/GameplayStatics.h>
 #include "Components/TimelineComponent.h"
 
-
-
 // Sets default values
 ARocketProjectile::ARocketProjectile()
 {
@@ -23,6 +21,7 @@ void ARocketProjectile::BeginPlay()
 	OwnerPawn = GetOwner();
 	timeLineInit();
 	BeginPlayFire();
+	spawnEffect(FireEffectMuzzle);
 }
 
 // Called every frame
@@ -41,6 +40,8 @@ if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	if (OtherComp->IsSimulatingPhysics()) {
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 	}
+	UGameplayStatics* SpawnEmmitter;
+	UParticleSystemComponent* particles = SpawnEmmitter->SpawnEmitterAtLocation(GetWorld(), DestroyEffect, GetActorTransform());
 	Destroy();
 }
 }
@@ -51,14 +52,10 @@ void ARocketProjectile::ExposeOnSpawnHitComponent(UPrimitiveComponent* ExposeHit
 	StartHomingTargetComponent = ExposeStartHomingTargetComponent;
 	FVector Location = HitComponent->GetComponentLocation();
 	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Normal Point: %s"), *HitComponent->GetName()));
-
-
-
 }
 
 void ARocketProjectile::init()
 {
-
 	// Use a sphere as a simple collision representation
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(15.0f);
@@ -81,7 +78,7 @@ void ARocketProjectile::init()
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->bIsHomingProjectile = 1;
 	// Die after 3 seconds by default
-	InitialLifeSpan = 3.0f;
+	InitialLifeSpan = 20.0f;
 
 }
 
@@ -142,6 +139,13 @@ void ARocketProjectile::setSpeed(float initSpeedBoost, float maxSpeedBoost, floa
 
 
 
+}
+
+void ARocketProjectile::spawnEffect(UNiagaraSystem* Effect)
+{
+	if (Effect) {
+		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(Effect, CollisionComp, NAME_None, FVector(0.f), FRotator(0.f), EAttachLocation::Type::KeepRelativeOffset, true);
+	}
 }
 
 

@@ -26,6 +26,11 @@ public class Rocket : ModuleRules
 			new string[]
 			{
 				"Core",
+                "CoreUObject", 
+				"Engine", 
+				"InputCore", 
+				"UMG", 
+				"Niagara"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
