@@ -10,18 +10,19 @@
 #include "RocketProjectile.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
-
+#include "InteractInterface.h"
 
 #include "RocketSpawnSocket.generated.h"
 
 
 
 UCLASS()
-class ROCKET_API ARocketSpawnSocket : public AActor
+class ROCKET_API ARocketSpawnSocket : public AActor, public IInteractInterface 
 {
 	GENERATED_BODY()
 
 public:
+	virtual void Fire_Implementation(FVector start, FRotator rot) override;
 	// Sets default values for this actor's properties
 	ARocketSpawnSocket();
 
@@ -32,8 +33,6 @@ protected:
 public:	// functions
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION(BlueprintCallable)
-	void Fire(FVector start, FRotator rot);
 private: // functions
 	UFUNCTION()
 		void Init();

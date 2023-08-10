@@ -3,6 +3,15 @@
 
 #include "RocketSpawnSocket.h"
 
+void ARocketSpawnSocket::Fire_Implementation(FVector start, FRotator rot)
+{
+	FHitResult OutHit = LineTrace(start, UKismetMathLibrary::GetForwardVector(rot));
+	if (IsValid(OutHit.GetComponent())) {
+		UPrimitiveComponent* HitComponent = OutHit.GetComponent();
+		SpawnARocketProjectile(HitComponent);
+	}	
+}
+
 // Sets default values
 ARocketSpawnSocket::ARocketSpawnSocket()
 {
@@ -34,15 +43,6 @@ void ARocketSpawnSocket::Init()
 	Arrow = CreateDefaultSubobject<UArrowComponent>("Arrow");
 	Arrow->SetupAttachment(RootComponent);
 
-}
-
-void ARocketSpawnSocket::Fire(FVector start, FRotator rot)
-{
-	FHitResult OutHit = LineTrace(start, UKismetMathLibrary::GetForwardVector(rot));
-	if (IsValid(OutHit.GetComponent())) {
-		UPrimitiveComponent* HitComponent = OutHit.GetComponent();
-		SpawnARocketProjectile(HitComponent);
-	}
 }
 
 

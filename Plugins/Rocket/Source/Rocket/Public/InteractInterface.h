@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+
 #include "UObject/Interface.h"
 #include "UObject/ObjectMacros.h"
 #include "UObject/ScriptMacros.h"
@@ -22,9 +24,10 @@ class ROCKET_API IInteractInterface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
+		// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+		void Fire(FVector start, FRotator rot);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = Trigger Reaction)
-		void Fire(FVector , FRotator );
+
 };
